@@ -551,7 +551,7 @@ const Carta = (props) => {
         }
         if (altImg > ampImg) {
             setAlert({
-                mensaje: "La orientació de la imatge no és correcta, ha de ser horitzontal. No acceptat.",
+                mensaje: "L'orientació de la imatge no és correcta, ha de ser horitzontal. No acceptat.",
                 tipo: 'error'
             })
             setOpenSnack(true);
