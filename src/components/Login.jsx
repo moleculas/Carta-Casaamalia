@@ -84,10 +84,7 @@ const Login = (props) => {
             setOpenSnack(true)
             return
         };
-        if ((valuesForm.nom === "admin" && valuesForm.password === "Cartaar2021@")
-            || (valuesForm.nom === "sergi" && valuesForm.password === "Cartasr2021@")
-            || (valuesForm.nom === "jordi" && valuesForm.password === "Cartajr2021@")
-            || (valuesForm.nom === "aitor" && valuesForm.password === "Cartaar2021@")) {
+        if (valuesForm.nom === "admin" && valuesForm.password === "1234") {
             setLogged(true);
         } else {
             setAlert({
