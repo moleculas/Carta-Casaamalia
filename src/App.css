@@ -1,0 +1,37 @@
+.Inicio {
+    text-align: center;
+  }
+  
+  .Inicio-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    .Inicio-logo {
+      animation: Inicio-logo-spin infinite 30s linear;
+    }
+  }
+  
+  .Inicio-header {    
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: #282c34;
+  }
+  
+  .Inicio-link {
+    color: #3f51b5;
+  }
+  
+  @keyframes Inicio-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
