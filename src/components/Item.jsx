@@ -94,6 +94,7 @@ const Item = (props) => {
         props.prHandleClickOpenDialogEdicio(elItemAEditar, laKey)
     }
     const retornaParadesNom = (elStringNumero) => {
+        console.log(elStringNumero)
         const myArr = elStringNumero.split(",");
         const myArr2=[];
         myArr.forEach((item) => {

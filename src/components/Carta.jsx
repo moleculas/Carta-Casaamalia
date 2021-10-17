@@ -467,6 +467,7 @@ const Carta = (props) => {
     };
 
     const retornaParadesNum = (elStringParada) => {
+        elStringParada = elStringParada.replace('No', '0');
         elStringParada = elStringParada.replace('(183) Cansaladeria & Xarcuteria Ollé', '1');
         elStringParada = elStringParada.replace('(61-66) Fruites i Verdures Francisco - Mari', '2');
         elStringParada = elStringParada.replace('(59-60 - 60 bis) Carns Paloma', '3');

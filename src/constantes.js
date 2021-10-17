@@ -1,6 +1,6 @@
 let rutaApi, rutaServer
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-    rutaApi = "http://localhost/api_casaamalia/index";
+    rutaApi = "http://localhost/api_casaamalia/index/";
     //rutaServer = window.location.protocol + "//" + window.location.host    
 
 } else {
