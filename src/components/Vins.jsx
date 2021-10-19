@@ -32,6 +32,8 @@ import Select from '@material-ui/core/Select';
 import DeleteIcon from '@material-ui/icons/Delete';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Item from './Item';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 const puntuacio = Constantes.PUNTUACIO;
 const rutaApi = Constantes.RUTA_API;
@@ -227,6 +229,7 @@ const Vins = (props) => {
     const [preFile, setPreFile] = useState(null);
     const refImg = useRef();
     const [botoDesactivat, setBotoDesactivat] = useState(true);
+    const [visibilitatCarta, setVisibilitatCarta] = useState(true);
     //dialog
     const [openDialog, setOpenDialog] = useState(false);
 
@@ -258,6 +261,11 @@ const Vins = (props) => {
 
         let elPreFile = 'images/vins_imatges/' + elItemAEditar[6].value;
         setPreFile(elPreFile);
+        if (elItemAEditar[10].value === '1') {
+            setVisibilitatCarta(true)
+        } else {
+            setVisibilitatCarta(false)
+        };
     }
     const handleClickOpenDialogCreacio = () => {
         setFetCanviVins(true);
@@ -265,6 +273,7 @@ const Vins = (props) => {
         setItemDefACrear([]);
         setBotoDesactivat(true);
         setOpenDialog(true);
+        setVisibilitatCarta(true);
         let array;
         let elValueAAfegir;
         switch (valueTab) {
@@ -387,6 +396,31 @@ const Vins = (props) => {
         }
     }
 
+    const handleClickVisibilitat = () => {
+        setVisibilitatCarta(!visibilitatCarta);
+        let array;
+        if (modeDialog === 'edicio') {
+            array = [...itemDefAEditar];
+            if (!visibilitatCarta) {
+                array[10] = '1';
+            } else {
+                array[10] = '0';
+            }
+            setItemDefAEditar(array);
+        } else {
+            array = [...itemDefACrear];
+            if (!visibilitatCarta) {
+                array[10] = '1';
+            } else {
+                array[10] = '0';
+            }
+            setItemDefACrear(array);
+        }
+    }
+    const handleMouseDownVisibilitat = (event) => {
+        event.preventDefault();
+    }
+
     const handleCloseDialog = () => {
         if (modeDialog === "creacio") {
             let array;
@@ -421,6 +455,7 @@ const Vins = (props) => {
         setPenin('');
         setPreFile(null);
         setFile(null);
+        setVisibilitatCarta(true);
     }
 
     const [parker, setParker] = useState('');
@@ -517,7 +552,7 @@ const Vins = (props) => {
         formData.append("file", file);
         formData.append("quina", "vins");
 
-        let apiUrl = rutaApi+"upload.php";
+        let apiUrl = rutaApi + "upload.php";
         await axios.post(apiUrl, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -614,12 +649,12 @@ const Vins = (props) => {
                 setOpenLoading(true);
                 let prePath;
                 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-                    prePath='../';           
-                }else{
-                    prePath='';       
-                }   
+                    prePath = '../';
+                } else {
+                    prePath = '';
+                }
                 (async () => {
-                    axios.get(prePath+'xml/vins.xml', {
+                    axios.get(prePath + 'xml/vins.xml', {
                         "Content-Type": "application/xml; charset=utf-8"
                     }).then(res => {
                         let p1 = [];
@@ -768,7 +803,8 @@ const Vins = (props) => {
                 + '</imatge><preu>' + item[7].value
                 + '</preu><puntuacio_pr>' + item[8].value
                 + '</puntuacio_pr><puntuacio_pe>' + item[9].value
-                + '</puntuacio_pe></item>';
+                + '</puntuacio_pe><visibilitat>' + item[10].value
+                + '</visibilitat></item>';
         });
         itemsCat6.forEach((item, index) => {
             iteracioItemsCat6[index] =
@@ -782,7 +818,8 @@ const Vins = (props) => {
                 + '</imatge><preu>' + item[7].value
                 + '</preu><puntuacio_pr>' + item[8].value
                 + '</puntuacio_pr><puntuacio_pe>' + item[9].value
-                + '</puntuacio_pe></item>';
+                + '</puntuacio_pe><visibilitat>' + item[10].value
+                + '</visibilitat></item>';
         });
         itemsCat7.forEach((item, index) => {
             iteracioItemsCat7[index] =
@@ -796,7 +833,8 @@ const Vins = (props) => {
                 + '</imatge><preu>' + item[7].value
                 + '</preu><puntuacio_pr>' + item[8].value
                 + '</puntuacio_pr><puntuacio_pe>' + item[9].value
-                + '</puntuacio_pe></item>';
+                + '</puntuacio_pe><visibilitat>' + item[10].value
+                + '</visibilitat></item>';
         });
         itemsCat8.forEach((item, index) => {
             iteracioItemsCat8[index] =
@@ -810,7 +848,8 @@ const Vins = (props) => {
                 + '</imatge><preu>' + item[7].value
                 + '</preu><puntuacio_pr>' + item[8].value
                 + '</puntuacio_pr><puntuacio_pe>' + item[9].value
-                + '</puntuacio_pe></item>';
+                + '</puntuacio_pe><visibilitat>' + item[10].value
+                + '</visibilitat></item>';
         });
         const stringIteracioItemsCat5 = iteracioItemsCat5.join("");
         const stringIteracioItemsCat6 = iteracioItemsCat6.join("");
@@ -819,12 +858,12 @@ const Vins = (props) => {
         const stringIteracioTotal = stringIteracioItemsCat5 + stringIteracioItemsCat6 + stringIteracioItemsCat7 + stringIteracioItemsCat8;
 
         const xmlStr = '<?xml version="1.0" encoding="UTF-8"?><doc><data>' + laData() + '</data>' + stringIteracioTotal + '</doc>';
-       
+
         const formData = new FormData();
         formData.append("fileXML", xmlStr);
         formData.append("quina", "vins");
 
-        let apiUrl = rutaApi+"saveXML.php";
+        let apiUrl = rutaApi + "saveXML.php";
         await axios.post(apiUrl, formData, {
             headers: {
                 //"Content-Type": "multipart/form-data",
@@ -884,6 +923,9 @@ const Vins = (props) => {
         if (!itemDefAEditar[9]) {
             array[9] = itemAEditar[9].value;
         }
+        if (!itemDefAEditar[10]) {
+            array[10] = itemAEditar[10].value;
+        }
 
         switch (valueTab) {
             case 0:
@@ -897,6 +939,7 @@ const Vins = (props) => {
                 itemsCat5[keyAGestionar][7].value = array[7];
                 itemsCat5[keyAGestionar][8].value = array[8];
                 itemsCat5[keyAGestionar][9].value = array[9];
+                itemsCat5[keyAGestionar][10].value = array[10];
                 if (ordre1 !== (keyAGestionar + 1)) {
                     reOrdenar();
                 }
@@ -912,6 +955,7 @@ const Vins = (props) => {
                 itemsCat6[keyAGestionar][7].value = array[7];
                 itemsCat6[keyAGestionar][8].value = array[8];
                 itemsCat6[keyAGestionar][9].value = array[9];
+                itemsCat6[keyAGestionar][10].value = array[10];
                 if (ordre2 !== (keyAGestionar + 1)) {
                     reOrdenar();
                 }
@@ -927,6 +971,7 @@ const Vins = (props) => {
                 itemsCat7[keyAGestionar][7].value = array[7];
                 itemsCat7[keyAGestionar][8].value = array[8];
                 itemsCat7[keyAGestionar][9].value = array[9];
+                itemsCat7[keyAGestionar][10].value = array[10];
                 if (ordre3 !== (keyAGestionar + 1)) {
                     reOrdenar();
                 }
@@ -942,6 +987,7 @@ const Vins = (props) => {
                 itemsCat8[keyAGestionar][7].value = array[7];
                 itemsCat8[keyAGestionar][8].value = array[8];
                 itemsCat8[keyAGestionar][9].value = array[9];
+                itemsCat8[keyAGestionar][10].value = array[10];
                 if (ordre4 !== (keyAGestionar + 1)) {
                     reOrdenar();
                 }
@@ -1032,6 +1078,21 @@ const Vins = (props) => {
                 'value': `${itemDefACrear[9]}`
 
             });
+        if (!itemDefACrear[10]) {
+            elValue.push(
+                {
+                    'name': `visibilitat`,
+                    'value': `1`
+
+                });
+        } else {
+            elValue.push(
+                {
+                    'name': `visibilitat`,
+                    'value': `${itemDefACrear[10]}`
+
+                });
+        }
         let array1;
         switch (valueTab) {
             case 0:
@@ -1210,11 +1271,24 @@ const Vins = (props) => {
                         fullWidth
                         maxWidth="lg"
                     >
-                        <DialogTitle id="alert-dialog-title">
-                            {
-                                modeDialog === 'creacio' ? (`Crear registre`) : (`Editar registre: ` + (keyAGestionar + 1))
-                            }
-                        </DialogTitle>
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <DialogTitle id="alert-dialog-title">
+                                {
+                                    modeDialog === 'creacio' ? (`Crear registre`) : (`Editar registre: ` + (keyAGestionar + 1))
+                                }
+                            </DialogTitle>
+                            <Box>
+                                <Chip variant="outlined" size="small" label={visibilitatCarta ? ('Visible a la carta') : ('No Visible a la carta')} />
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    style={{ marginRight: '15px', marginLeft: '10px' }}
+                                    onClick={handleClickVisibilitat}
+                                    onMouseDown={handleMouseDownVisibilitat}
+                                >
+                                    {visibilitatCarta ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </Box>
+                        </Box>
                         <DialogContent>
                             <form onSubmit=
                                 {

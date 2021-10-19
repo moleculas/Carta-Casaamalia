@@ -32,6 +32,8 @@ import Select from '@material-ui/core/Select';
 import DeleteIcon from '@material-ui/icons/Delete';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Item from './Item';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 const parades = Constantes.PARADES;
 const rutaApi = Constantes.RUTA_API;
@@ -223,6 +225,7 @@ const Carta = (props) => {
     const [preFile, setPreFile] = useState(null);
     const refImg = useRef();
     const [botoDesactivat, setBotoDesactivat] = useState(true);
+    const [visibilitatCarta, setVisibilitatCarta] = useState(true);
     //dialog
     const [openDialog, setOpenDialog] = useState(false);
 
@@ -259,6 +262,11 @@ const Carta = (props) => {
 
         let elPreFile = 'images/plats_imatges/' + elItemAEditar[8].value;
         setPreFile(elPreFile);
+        if (elItemAEditar[11].value === '1') {
+            setVisibilitatCarta(true)
+        } else {
+            setVisibilitatCarta(false)
+        };
     }
     const handleClickOpenDialogCreacio = () => {
         setFetCanviCarta(true);
@@ -266,6 +274,7 @@ const Carta = (props) => {
         setItemDefACrear([]);
         setBotoDesactivat(true);
         setOpenDialog(true);
+        setVisibilitatCarta(true);
         let array;
         let elValueAAfegir;
         switch (valueTab) {
@@ -410,6 +419,31 @@ const Carta = (props) => {
         }
     }
 
+    const handleClickVisibilitat = () => {
+        setVisibilitatCarta(!visibilitatCarta);
+        let array;
+        if (modeDialog === 'edicio') {
+            array = [...itemDefAEditar];
+            if (!visibilitatCarta) {
+                array[11] = '1';
+            } else {
+                array[11] = '0';
+            }
+            setItemDefAEditar(array);
+        } else {
+            array = [...itemDefACrear];
+            if (!visibilitatCarta) {
+                array[11] = '1';
+            } else {
+                array[11] = '0';
+            }
+            setItemDefACrear(array);
+        }
+    }
+    const handleMouseDownVisibilitat = (event) => {
+        event.preventDefault();
+    }
+
     const handleCloseDialog = () => {
         if (modeDialog === "creacio") {
             let array;
@@ -443,6 +477,7 @@ const Carta = (props) => {
         setParada([]);
         setPreFile(null);
         setFile(null);
+        setVisibilitatCarta(true);
     }
 
     const [parada, setParada] = useState([]);
@@ -667,12 +702,12 @@ const Carta = (props) => {
                 setOpenLoading(true);
                 let prePath;
                 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-                    prePath='../';           
-                }else{
-                    prePath='';       
-                }   
+                    prePath = '../';
+                } else {
+                    prePath = '';
+                }
                 (async () => {
-                    axios.get(prePath+'xml/menu.xml', {
+                    axios.get(prePath + 'xml/menu.xml', {
                         "Content-Type": "application/xml; charset=utf-8"
                     }).then(res => {
                         let p1 = [];
@@ -822,7 +857,8 @@ const Carta = (props) => {
                 + '</descripcio_fr><imatge>' + item[8].value
                 + '</imatge><preu>' + item[9].value
                 + '</preu><parada>' + item[10].value
-                + '</parada></item>';
+                + '</parada><visibilitat>' + item[11].value
+                + '</visibilitat></item>';
         });
         itemsCat2.forEach((item, index) => {
             iteracioItemsCat2[index] =
@@ -837,7 +873,8 @@ const Carta = (props) => {
                 + '</descripcio_fr><imatge>' + item[8].value
                 + '</imatge><preu>' + item[9].value
                 + '</preu><parada>' + item[10].value
-                + '</parada></item>';
+                + '</parada><visibilitat>' + item[11].value
+                + '</visibilitat></item>';
         });
         itemsCat3.forEach((item, index) => {
             iteracioItemsCat3[index] =
@@ -852,7 +889,8 @@ const Carta = (props) => {
                 + '</descripcio_fr><imatge>' + item[8].value
                 + '</imatge><preu>' + item[9].value
                 + '</preu><parada>' + item[10].value
-                + '</parada></item>';
+                + '</parada><visibilitat>' + item[11].value
+                + '</visibilitat></item>';
         });
         itemsCat4.forEach((item, index) => {
             iteracioItemsCat4[index] =
@@ -867,7 +905,8 @@ const Carta = (props) => {
                 + '</descripcio_fr><imatge>' + item[8].value
                 + '</imatge><preu>' + item[9].value
                 + '</preu><parada>' + item[10].value
-                + '</parada></item>';
+                + '</parada><visibilitat>' + item[11].value
+                + '</visibilitat></item>';
         });
         const stringIteracioItemsCat1 = iteracioItemsCat1.join("");
         const stringIteracioItemsCat2 = iteracioItemsCat2.join("");
@@ -944,6 +983,9 @@ const Carta = (props) => {
         if (!itemDefAEditar[10]) {
             array[10] = itemAEditar[10].value;
         }
+        if (!itemDefAEditar[11]) {
+            array[11] = itemAEditar[11].value;
+        }
 
         switch (valueTab) {
             case 0:
@@ -958,6 +1000,7 @@ const Carta = (props) => {
                 itemsCat1[keyAGestionar][8].value = array[8];
                 itemsCat1[keyAGestionar][9].value = array[9];
                 itemsCat1[keyAGestionar][10].value = array[10];
+                itemsCat1[keyAGestionar][11].value = array[11];
                 if (ordre1 !== (keyAGestionar + 1)) {
                     reOrdenar();
                 }
@@ -974,6 +1017,7 @@ const Carta = (props) => {
                 itemsCat2[keyAGestionar][8].value = array[8];
                 itemsCat2[keyAGestionar][9].value = array[9];
                 itemsCat2[keyAGestionar][10].value = array[10];
+                itemsCat2[keyAGestionar][11].value = array[11];
                 if (ordre2 !== (keyAGestionar + 1)) {
                     reOrdenar();
                 }
@@ -990,6 +1034,7 @@ const Carta = (props) => {
                 itemsCat3[keyAGestionar][8].value = array[8];
                 itemsCat3[keyAGestionar][9].value = array[9];
                 itemsCat3[keyAGestionar][10].value = array[10];
+                itemsCat3[keyAGestionar][11].value = array[11];
                 if (ordre3 !== (keyAGestionar + 1)) {
                     reOrdenar();
                 }
@@ -1006,6 +1051,7 @@ const Carta = (props) => {
                 itemsCat4[keyAGestionar][8].value = array[8];
                 itemsCat4[keyAGestionar][9].value = array[9];
                 itemsCat4[keyAGestionar][10].value = array[10];
+                itemsCat3[keyAGestionar][11].value = array[11];
                 if (ordre4 !== (keyAGestionar + 1)) {
                     reOrdenar();
                 }
@@ -1015,8 +1061,8 @@ const Carta = (props) => {
     }
 
     const processarDadesCreacio = (e) => {
-        e.preventDefault();
 
+        e.preventDefault();
         if (!itemDefACrear[0] ||
             !itemDefACrear[1] ||
             !itemDefACrear[2] ||
@@ -1104,6 +1150,22 @@ const Carta = (props) => {
                 'value': `${itemDefACrear[10]}`
 
             });
+        if (!itemDefACrear[11]) {
+            elValue.push(
+                {
+                    'name': `visibilitat`,
+                    'value': `1`
+
+                });
+        } else {
+            elValue.push(
+                {
+                    'name': `visibilitat`,
+                    'value': `${itemDefACrear[11]}`
+
+                });
+        }
+        
         let array1;
         switch (valueTab) {
             case 0:
@@ -1282,11 +1344,24 @@ const Carta = (props) => {
                         fullWidth
                         maxWidth="lg"
                     >
-                        <DialogTitle id="alert-dialog-title">
-                            {
-                                modeDialog === 'creacio' ? (`Crear registre`) : (`Editar registre: ` + (keyAGestionar + 1))
-                            }
-                        </DialogTitle>
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <DialogTitle id="alert-dialog-title">
+                                {
+                                    modeDialog === 'creacio' ? (`Crear registre`) : (`Editar registre: ` + (keyAGestionar + 1))
+                                }
+                            </DialogTitle>
+                            <Box>
+                                <Chip variant="outlined" size="small" label={visibilitatCarta ? ('Visible a la carta') : ('No Visible a la carta')} />
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    style={{ marginRight: '15px', marginLeft: '10px' }}
+                                    onClick={handleClickVisibilitat}
+                                    onMouseDown={handleMouseDownVisibilitat}
+                                >
+                                    {visibilitatCarta ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </Box>
+                        </Box>
                         <DialogContent>
                             <form onSubmit=
                                 {
