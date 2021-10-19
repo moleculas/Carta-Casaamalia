@@ -1051,7 +1051,7 @@ const Carta = (props) => {
                 itemsCat4[keyAGestionar][8].value = array[8];
                 itemsCat4[keyAGestionar][9].value = array[9];
                 itemsCat4[keyAGestionar][10].value = array[10];
-                itemsCat3[keyAGestionar][11].value = array[11];
+                itemsCat4[keyAGestionar][11].value = array[11];
                 if (ordre4 !== (keyAGestionar + 1)) {
                     reOrdenar();
                 }
