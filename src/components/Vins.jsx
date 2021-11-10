@@ -167,6 +167,7 @@ const Vins = (props) => {
     const classes = estilos();
     const {
         logged,
+        usuari,
         dadesCarregadesVins,
         setDadesCarregadesVins,
         itemsCat5,
@@ -698,9 +699,9 @@ const Vins = (props) => {
         }
     }, [logged, dadesCarregadesVins]);
 
-    const laData = () => {
+    const laData = (elUsuari) => {
         let data = new Date().toLocaleString() + '';
-        return data;
+        return data + ' per '+elUsuari;
     }
     const reOrdenar = () => {
 
@@ -857,7 +858,7 @@ const Vins = (props) => {
         const stringIteracioItemsCat8 = iteracioItemsCat8.join("");
         const stringIteracioTotal = stringIteracioItemsCat5 + stringIteracioItemsCat6 + stringIteracioItemsCat7 + stringIteracioItemsCat8;
 
-        const xmlStr = '<?xml version="1.0" encoding="UTF-8"?><doc><data>' + laData() + '</data>' + stringIteracioTotal + '</doc>';
+        const xmlStr = '<?xml version="1.0" encoding="UTF-8"?><doc><data>' + laData(usuari) + '</data>' + stringIteracioTotal + '</doc>';
 
         const formData = new FormData();
         formData.append("fileXML", xmlStr);
@@ -1164,7 +1165,7 @@ const Vins = (props) => {
                             className={classes.root1}
                         >
                             <Typography variant="h5">Carta Vins Casa Amàlia</Typography>
-                            <Chip label={`Última actualització: ` + laDataXMLVins} />
+                            <Chip label={`Actualitzat per última vegada el: ` + laDataXMLVins} />
                         </Box>
                         <Box
                             pl={2}

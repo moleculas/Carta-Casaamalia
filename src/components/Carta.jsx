@@ -163,6 +163,7 @@ const Carta = (props) => {
     const classes = estilos();
     const {
         logged,
+        usuari,
         dadesCarregadesCarta,
         setDadesCarregadesCarta,
         itemsCat1,
@@ -751,9 +752,9 @@ const Carta = (props) => {
         }
     }, [logged, dadesCarregadesCarta]);
 
-    const laData = () => {
+    const laData = (elUsuari) => {
         let data = new Date().toLocaleString() + '';
-        return data;
+        return data + ' per '+elUsuari;
     }
     const reOrdenar = () => {
 
@@ -914,8 +915,8 @@ const Carta = (props) => {
         const stringIteracioItemsCat4 = iteracioItemsCat4.join("");
         const stringIteracioTotal = stringIteracioItemsCat1 + stringIteracioItemsCat2 + stringIteracioItemsCat3 + stringIteracioItemsCat4;
 
-        const xmlStr = '<?xml version="1.0" encoding="UTF-8"?><doc><data>' + laData() + '</data>' + stringIteracioTotal + '</doc>';
-
+        const xmlStr = '<?xml version="1.0" encoding="UTF-8"?><doc><data>' + laData(usuari) + '</data>' + stringIteracioTotal + '</doc>';
+        
         const formData = new FormData();
         formData.append("fileXML", xmlStr);
         formData.append("quina", "plats");
@@ -1165,7 +1166,7 @@ const Carta = (props) => {
 
                 });
         }
-        
+
         let array1;
         switch (valueTab) {
             case 0:
@@ -1237,7 +1238,7 @@ const Carta = (props) => {
                             className={classes.root1}
                         >
                             <Typography variant="h5">Carta Plats Casa Amàlia</Typography>
-                            <Chip label={`Última actualització: ` + laDataXMLCarta} />
+                            <Chip label={`Actualitzat per última vegada el: ` + laDataXMLCarta} />
                         </Box>
                         <Box
                             pl={2}
@@ -1252,7 +1253,7 @@ const Carta = (props) => {
                             <div className={classes.root2}>
                                 <AppBar position="static">
                                     <Tabs value={valueTab} onChange={handleChangeTab} orientation={orientacioTabs()}>
-                                        <Tab label="A totes hores" {...a11yProps(0)} />
+                                        <Tab label="Entreteniments" {...a11yProps(0)} />
                                         <Tab label="Tradició" {...a11yProps(1)} />
                                         <Tab label="Transformació" {...a11yProps(2)} />
                                         <Tab label="La cirereta" {...a11yProps(3)} />
@@ -1621,7 +1622,7 @@ const Carta = (props) => {
                             </form>
                         </DialogContent>
                     </Dialog>
-                </Box>
+                </Box>                
             ) : null}
         </div >
     )

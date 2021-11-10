@@ -16,7 +16,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { withRouter } from "react-router-dom";
 
-const estilos = makeStyles((theme) => ({    
+const estilos = makeStyles((theme) => ({
     form: {
         display: 'flex',
         flexDirection: 'row',
@@ -41,11 +41,12 @@ const Login = (props) => {
 
     const classes = estilos();
     const { logged, setLogged } = useContext(CartaContext);
+    const { setUsuari } = useContext(CartaContext);
     useEffect(() => {
         if (logged) {
             props.history.push('/')
         }
-    }, [logged,props.history]);
+    }, [logged, props.history]);
 
     //alert
     const [openSnack, setOpenSnack] = useState(false);
@@ -85,10 +86,14 @@ const Login = (props) => {
             return
         };
         if ((valuesForm.nom === "admin" && valuesForm.password === "Cartaar2021@")
-        || (valuesForm.nom === "sergi" && valuesForm.password === "Cartasr2021@")
-        || (valuesForm.nom === "jordi" && valuesForm.password === "Cartajr2021@")
-        || (valuesForm.nom === "aitor" && valuesForm.password === "Cartaar2021@")) {
+            || (valuesForm.nom === "sergi" && valuesForm.password === "Cartasr2021@")
+            || (valuesForm.nom === "jordi" && valuesForm.password === "Poppy2013")
+            || (valuesForm.nom === "antonio" && valuesForm.password === "Balusito21")
+            || (valuesForm.nom === "aitor" && valuesForm.password === "iruki")) {
             setLogged(true);
+            const elUsuari = valuesForm.nom.charAt(0).toUpperCase() + valuesForm.nom.slice(1);
+            setUsuari(elUsuari);
+
         } else {
             setAlert({
                 mensaje: "Dades incorrectes. Torna a provar.",

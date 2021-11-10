@@ -5,6 +5,7 @@ export const CartaContext = createContext();
 const CartaProvider = (props) => {
 
     const [logged, setLogged] = useState(false);
+    const [usuari, setUsuari] = useState('');
     const [dadesCarregadesCarta, setDadesCarregadesCarta] = useState(false);
     const [dadesCarregadesVins, setDadesCarregadesVins] = useState(false);
     const [laDataXMLCarta, setLaDataXMLCarta] = useState('');
@@ -24,6 +25,8 @@ const CartaProvider = (props) => {
         <CartaContext.Provider value={{ 
             logged, 
             setLogged, 
+            usuari,
+            setUsuari,
             dadesCarregadesCarta, 
             setDadesCarregadesCarta, 
             dadesCarregadesVins, 
