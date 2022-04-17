@@ -10,6 +10,8 @@ const CartaProvider = (props) => {
     const [dadesCarregadesVins, setDadesCarregadesVins] = useState(false);
     const [laDataXMLCarta, setLaDataXMLCarta] = useState('');
     const [laDataXMLVins, setLaDataXMLVins] = useState('');
+    const [titolsXMLCarta, setTitolsXMLCarta] = useState([]);
+    const [titolsXMLVins, setTitolsXMLVins] = useState([]);
     const [itemsCat1, setItemsCat1] = useState([]);
     const [itemsCat2, setItemsCat2] = useState([]);
     const [itemsCat3, setItemsCat3] = useState([]);
@@ -51,6 +53,10 @@ const CartaProvider = (props) => {
             setLaDataXMLCarta,
             laDataXMLVins, 
             setLaDataXMLVins,
+            titolsXMLCarta, 
+            setTitolsXMLCarta,
+            titolsXMLVins, 
+            setTitolsXMLVins,
             fetCanviCarta, 
             setFetCanviCarta,
             fetCanviVins, 

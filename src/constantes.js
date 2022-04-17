@@ -49,7 +49,8 @@ const Constantes = {
         '(6-7) Bacallaneria Masclans',
         '(8-11) Carnisseria Figueras',
         '(12-13) Xarcuteria Teruel',
-        '(179-182) Llegums cuits, menjars preparats i fruits secs F. Lorente' 
+        '(179-182) Llegums cuits, menjars preparats i fruits secs F. Lorente',
+        '(47-48-49) Especialitats Marta',
     ],
     
     PUNTUACIO: [
@@ -78,8 +79,20 @@ const Constantes = {
             label: '94 punts',
         },
         {
+            value: '94_2',
+            label: '94+ punts',
+        },
+        {
             value: '95',
             label: '95 punts',
+        },
+        {
+            value: '96',
+            label: '96 punts',
+        },
+        {
+            value: '97',
+            label: '97 punts',
         }
     ]
 };

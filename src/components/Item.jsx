@@ -107,6 +107,15 @@ const Item = (props) => {
         });
         return myArr2.toString();
     }
+    const retornaPuntuacioParker = (valor) => {
+        if (valor === '0') {
+            return 'No'
+        } else if (valor === '94_2') {
+            return '94+ punts'
+        } else {
+            return valor + ' punts'
+        };
+    }
 
     return (
         <div>
@@ -163,7 +172,7 @@ const Item = (props) => {
                                             Preu: {props.prItem[7].value}
                                         </Typography>
                                         <Typography variant="body1" component="div">
-                                            Puntuació Parker: {props.prItem[8].value === '0' ? ('No') : (props.prItem[8].value + ' punts')}
+                                            Puntuació Parker: {retornaPuntuacioParker(props.prItem[8].value)}
                                         </Typography>
                                         <Typography variant="body1" component="div">
                                             Puntuació Peñín: {props.prItem[9].value === '0' ? ('No') : (props.prItem[9].value + ' punts')}

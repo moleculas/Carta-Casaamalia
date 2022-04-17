@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, Fragment } from 'react';
 import Constantes from "../constantes";
 import { makeStyles } from "@material-ui/core";
 import Box from '@material-ui/core/Box';
@@ -34,6 +34,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Item from './Item';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import Paper from '@material-ui/core/Paper';
 
 const parades = Constantes.PARADES;
 const rutaApi = Constantes.RUTA_API;
@@ -117,12 +118,18 @@ const estilos = makeStyles((theme) => ({
     formInput: {
         marginBottom: '10px',
     },
+     //titols
+    casellaTitol: {
+        marginBottom: 30,
+        padding: 13
+    }
 }));
 
 //snackbar y alert
 const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+};
+
 //tabs
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -142,24 +149,22 @@ function TabPanel(props) {
             )}
         </div>
     );
-}
+};
 
 function a11yProps(index) {
     return {
         id: `simple-tab-${index}`,
         'aria-controls': `simple-tabpanel-${index}`,
     };
-}
+};
 
 function useForceUpdate() {
     let [value, setState] = useState(true);
     return () => setState(!value);
-}
+};
 
 const Carta = (props) => {
-
     let forceUpdate = useForceUpdate();
-
     const classes = estilos();
     const {
         logged,
@@ -176,6 +181,8 @@ const Carta = (props) => {
         setItemsCat4,
         laDataXMLCarta,
         setLaDataXMLCarta,
+        titolsXMLCarta,
+        setTitolsXMLCarta,
         fetCanviCarta,
         setFetCanviCarta
     } = useContext(CartaContext);
@@ -187,6 +194,32 @@ const Carta = (props) => {
     const [itemAEditar, setItemAEditar] = useState([]);
     const [itemDefAEditar, setItemDefAEditar] = useState([]);
     const [itemDefACrear, setItemDefACrear] = useState([]);
+    const [valuesFormTitols, setValuesFormTitols] = useState([
+        {
+            ca: '',
+            es: '',
+            en: '',
+            fr: ''
+        },
+        {
+            ca: '',
+            es: '',
+            en: '',
+            fr: ''
+        },
+        {
+            ca: '',
+            es: '',
+            en: '',
+            fr: ''
+        },
+        {
+            ca: '',
+            es: '',
+            en: '',
+            fr: ''
+        }
+    ]);
     const [keyAGestionar, setKeyAGestionar] = useState(null);
     const [modeDialog, setModeDialog] = useState(null);
     const [estemAPlats] = useState(true);
@@ -203,24 +236,28 @@ const Carta = (props) => {
         }
         setOpenSnack(false);
     };
+
     //tabs
     const [valueTab, setValueTab] = useState(0);
     const [valueTab2, setValueTab2] = useState(0);
 
     const handleChangeTab = (event, newValue) => {
         setValueTab(newValue);
-    }
+    };
+
     const handleChangeTab2 = (event, newValue) => {
         setValueTab2(newValue);
-    }
+    };
+
     const esDesktop = useMediaQuery(theme => theme.breakpoints.up('lg'));
+
     const orientacioTabs = () => {
         if (esDesktop) {
             return "horizontal";
         } else {
             return "vertical";
         }
-    }
+    };
 
     const [file, setFile] = useState(null);
     const [preFile, setPreFile] = useState(null);
@@ -229,6 +266,11 @@ const Carta = (props) => {
     const [visibilitatCarta, setVisibilitatCarta] = useState(true);
     //dialog
     const [openDialog, setOpenDialog] = useState(false);
+    const [openDialogTitols, setOpenDialogTitols] = useState(false);
+
+    const handleOpendialogTitols = () => {
+        setOpenDialogTitols(true);
+    };
 
     const handleClickOpenDialogEdicio = (elItemAEditar, laKey) => {
         setFetCanviCarta(true);
@@ -268,7 +310,8 @@ const Carta = (props) => {
         } else {
             setVisibilitatCarta(false)
         };
-    }
+    };
+
     const handleClickOpenDialogCreacio = () => {
         setFetCanviCarta(true);
         setModeDialog('creacio');
@@ -313,7 +356,8 @@ const Carta = (props) => {
                 break;
             default:
         }
-    }
+    };
+
     const setRegistre = (event) => {
         let array;
         switch (event.target.id) {
@@ -418,7 +462,13 @@ const Carta = (props) => {
                 break;
             default:
         }
-    }
+    };
+
+    const handleChangeFormTitols = (prop) => (event) => {
+        let array = [...valuesFormTitols];
+        array[valueTab] = { ...valuesFormTitols[valueTab], [prop]: event.target.value }
+        setValuesFormTitols(array);
+    };
 
     const handleClickVisibilitat = () => {
         setVisibilitatCarta(!visibilitatCarta);
@@ -440,10 +490,11 @@ const Carta = (props) => {
             }
             setItemDefACrear(array);
         }
-    }
+    };
+
     const handleMouseDownVisibilitat = (event) => {
         event.preventDefault();
-    }
+    };
 
     const handleCloseDialog = () => {
         if (modeDialog === "creacio") {
@@ -479,9 +530,40 @@ const Carta = (props) => {
         setPreFile(null);
         setFile(null);
         setVisibilitatCarta(true);
-    }
+    };
+
+    const handleCloseDialogTitols = () => {
+        setOpenDialogTitols(false);
+        setValuesFormTitols([
+            {
+                ca: '',
+                es: '',
+                en: '',
+                fr: ''
+            },
+            {
+                ca: '',
+                es: '',
+                en: '',
+                fr: ''
+            },
+            {
+                ca: '',
+                es: '',
+                en: '',
+                fr: ''
+            },
+            {
+                ca: '',
+                es: '',
+                en: '',
+                fr: ''
+            }
+        ]);
+    };
 
     const [parada, setParada] = useState([]);
+
     const handleChangeSelect = (event) => {
         const {
             target: { value },
@@ -539,12 +621,13 @@ const Carta = (props) => {
         elStringParada = elStringParada.replace('(12-13) Xarcuteria Teruel', '33');
         elStringParada = elStringParada.replace('(179-182) Llegums cuits, menjars preparats i fruits secs F. Lorente', '34');
         return elStringParada;
-    }
+    };
 
     const [ordre1, setOrdre1] = useState('');
     const [ordre2, setOrdre2] = useState('');
     const [ordre3, setOrdre3] = useState('');
     const [ordre4, setOrdre4] = useState('');
+
     const handleChangeSelect1 = (event) => {
         switch (valueTab) {
             case 0:
@@ -562,17 +645,20 @@ const Carta = (props) => {
             default:
         }
     };
+
     const handleChangeImage = (e) => {
         setFile(e.target.files[0]);
         setPreFile(URL.createObjectURL(e.target.files[0]));
         setBotoDesactivat(false);
     };
+
     const resetImage = () => {
         setFile(null);
         setPreFile(null);
         setBotoDesactivat(true);
         document.getElementById("uploadCaptureInputFile").value = "";
-    }
+    };
+
     const handleSubmitImage = async (e) => {
         e.preventDefault();
         const ampImg = refImg.current.naturalWidth;
@@ -674,7 +760,7 @@ const Carta = (props) => {
                 break;
             default:
         }
-    }
+    };
 
     useEffect(() => {
         if (!logged) {
@@ -715,10 +801,14 @@ const Carta = (props) => {
                         let p2 = [];
                         let p3 = [];
                         let p4 = [];
+                        let titols = [];
                         var xml = new XMLParser().parseFromString(res.data);
                         let elsItems = xml.children;
                         setLaDataXMLCarta(elsItems[0].value);
                         for (let i in elsItems) {
+                            if (elsItems[i].attributes.categoria === "titol") {
+                                titols.push(elsItems[i].children);
+                            };
                             if (elsItems[i].attributes.categoria === "1") {
                                 p1.push(elsItems[i].children);
                             };
@@ -730,8 +820,9 @@ const Carta = (props) => {
                             };
                             if (elsItems[i].attributes.categoria === "4") {
                                 p4.push(elsItems[i].children);
-                            }
-                        }
+                            };
+                        };
+                        setTitolsXMLCarta(titols);
                         setItemsCat1(p1);
                         setItemsCat2(p2);
                         setItemsCat3(p3);
@@ -754,10 +845,10 @@ const Carta = (props) => {
 
     const laData = (elUsuari) => {
         let data = new Date().toLocaleString() + '';
-        return data + ' per '+elUsuari;
-    }
-    const reOrdenar = () => {
+        return data + ' per ' + elUsuari;
+    };
 
+    const reOrdenar = () => {
         let fromIndex;
         let element;
         let toIndex;
@@ -792,7 +883,7 @@ const Carta = (props) => {
                 break;
             default:
         }
-    }
+    };
 
     const borrarItem = (index) => {
         let fromIndex;
@@ -821,7 +912,7 @@ const Carta = (props) => {
         };
         setFetCanviCarta(true);
         forceUpdate();
-    }
+    };
 
     const generarCarta = async () => {
         if (!fetCanviCarta) {
@@ -840,7 +931,6 @@ const Carta = (props) => {
             setOpenSnack(true);
             return;
         };
-
         const iteracioItemsCat1 = [];
         const iteracioItemsCat2 = [];
         const iteracioItemsCat3 = [];
@@ -913,14 +1003,29 @@ const Carta = (props) => {
         const stringIteracioItemsCat2 = iteracioItemsCat2.join("");
         const stringIteracioItemsCat3 = iteracioItemsCat3.join("");
         const stringIteracioItemsCat4 = iteracioItemsCat4.join("");
-        const stringIteracioTotal = stringIteracioItemsCat1 + stringIteracioItemsCat2 + stringIteracioItemsCat3 + stringIteracioItemsCat4;
-
+        const stringIteracioTitols =
+            '<item categoria="titol"><titol_ca>' + titolsXMLCarta[0][0].value
+            + '</titol_ca><titol_es>' + titolsXMLCarta[0][1].value
+            + '</titol_es><titol_en>' + titolsXMLCarta[0][2].value
+            + '</titol_en><titol_fr>' + titolsXMLCarta[0][3].value
+            + '</titol_fr></item><item categoria="titol"><titol_ca>' + titolsXMLCarta[1][0].value
+            + '</titol_ca><titol_es>' + titolsXMLCarta[1][1].value
+            + '</titol_es><titol_en>' + titolsXMLCarta[1][2].value
+            + '</titol_en><titol_fr>' + titolsXMLCarta[1][3].value
+            + '</titol_fr></item><item categoria="titol"><titol_ca>' + titolsXMLCarta[2][0].value
+            + '</titol_ca><titol_es>' + titolsXMLCarta[2][1].value
+            + '</titol_es><titol_en>' + titolsXMLCarta[2][2].value
+            + '</titol_en><titol_fr>' + titolsXMLCarta[2][3].value
+            + '</titol_fr></item><item categoria="titol"><titol_ca>' + titolsXMLCarta[3][0].value
+            + '</titol_ca><titol_es>' + titolsXMLCarta[3][1].value
+            + '</titol_es><titol_en>' + titolsXMLCarta[3][2].value
+            + '</titol_en><titol_fr>' + titolsXMLCarta[3][3].value
+            + '</titol_fr></item>';
+        const stringIteracioTotal = stringIteracioTitols + stringIteracioItemsCat1 + stringIteracioItemsCat2 + stringIteracioItemsCat3 + stringIteracioItemsCat4;
         const xmlStr = '<?xml version="1.0" encoding="UTF-8"?><doc><data>' + laData(usuari) + '</data>' + stringIteracioTotal + '</doc>';
-        
         const formData = new FormData();
         formData.append("fileXML", xmlStr);
         formData.append("quina", "plats");
-
         let apiUrl = rutaApi + "saveXML.php";
         await axios.post(apiUrl, formData, {
             headers: {
@@ -944,7 +1049,27 @@ const Carta = (props) => {
         });
         setFetCanviCarta(false);
         setDadesCarregadesCarta(false);
-    }
+    };
+
+    const processarDadesTitol = (e) => {
+        e.preventDefault();
+        let array = [...titolsXMLCarta];
+        if (valuesFormTitols[valueTab].ca) {
+            array[valueTab][0].value = valuesFormTitols[valueTab].ca;
+        };
+        if (valuesFormTitols[valueTab].es) {
+            array[valueTab][1].value = valuesFormTitols[valueTab].es;
+        };
+        if (valuesFormTitols[valueTab].en) {
+            array[valueTab][2].value = valuesFormTitols[valueTab].en;
+        };
+        if (valuesFormTitols[valueTab].fr) {
+            array[valueTab][3].value = valuesFormTitols[valueTab].fr;
+        };
+        setTitolsXMLCarta(array);
+        handleCloseDialogTitols();
+        setFetCanviCarta(true);
+    };
 
     const processarDadesEdicio = (e) => {
         e.preventDefault();
@@ -986,8 +1111,7 @@ const Carta = (props) => {
         }
         if (!itemDefAEditar[11]) {
             array[11] = itemAEditar[11].value;
-        }
-
+        };
         switch (valueTab) {
             case 0:
                 itemsCat1[keyAGestionar][0].value = array[0];
@@ -1059,10 +1183,9 @@ const Carta = (props) => {
                 break;
             default:
         }
-    }
+    };
 
     const processarDadesCreacio = (e) => {
-
         e.preventDefault();
         if (!itemDefACrear[0] ||
             !itemDefACrear[1] ||
@@ -1165,8 +1288,7 @@ const Carta = (props) => {
                     'value': `${itemDefACrear[11]}`
 
                 });
-        }
-
+        };
         let array1;
         switch (valueTab) {
             case 0:
@@ -1208,7 +1330,7 @@ const Carta = (props) => {
             default:
         }
         handleCloseDialog();
-    }
+    };
 
     const determinaOrdre = () => {
         switch (valueTab) {
@@ -1222,7 +1344,7 @@ const Carta = (props) => {
                 return ordre4;
             default:
         }
-    }
+    };
 
     return (
         <div>
@@ -1246,20 +1368,52 @@ const Carta = (props) => {
                         >
                             <Divider />
                         </Box>
-
                     </Grid>
                     <Grid item xs={12}>
                         <Box p={2}>
                             <div className={classes.root2}>
                                 <AppBar position="static">
                                     <Tabs value={valueTab} onChange={handleChangeTab} orientation={orientacioTabs()}>
-                                        <Tab label="Entreteniments" {...a11yProps(0)} />
-                                        <Tab label="Tradició" {...a11yProps(1)} />
-                                        <Tab label="Transformació" {...a11yProps(2)} />
-                                        <Tab label="La cirereta" {...a11yProps(3)} />
+                                        <Tab label={titolsXMLCarta[0][0].value} {...a11yProps(0)} />
+                                        <Tab label={titolsXMLCarta[1][0].value} {...a11yProps(1)} />
+                                        <Tab label={titolsXMLCarta[2][0].value} {...a11yProps(2)} />
+                                        <Tab label={titolsXMLCarta[3][0].value} {...a11yProps(3)} />
                                     </Tabs>
                                 </AppBar>
                                 <TabPanel value={valueTab} index={0}>
+                                    <Paper elevation={1} className={classes.casellaTitol}>
+                                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                                <Chip
+                                                    color="secondary"
+                                                    label={
+                                                        <Fragment>
+                                                            <Typography
+                                                                variant="body2"
+                                                                component="span"
+                                                                style={{ marginLeft: 20, marginRight: 10 }}
+                                                            >
+                                                                Títol imatge carta:
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="span"
+                                                                style={{ marginRight: 20 }}
+                                                            >
+                                                                {titolsXMLCarta[0][0].value}
+                                                            </Typography>
+                                                        </Fragment>
+                                                    } />
+                                            </Box>
+                                            <Box>
+                                                <Button color="primary" variant="contained"
+                                                    onClick={() => handleOpendialogTitols()}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    </Paper>
                                     {
                                         itemsCat1.length === 0 ? (
                                             <Typography variant="body1">No hi ha ítems.</Typography>
@@ -1273,6 +1427,39 @@ const Carta = (props) => {
                                     }
                                 </TabPanel>
                                 <TabPanel value={valueTab} index={1}>
+                                    <Paper elevation={1} className={classes.casellaTitol}>
+                                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                                <Chip
+                                                    color="secondary"
+                                                    label={
+                                                        <Fragment>
+                                                            <Typography
+                                                                variant="body2"
+                                                                component="span"
+                                                                style={{ marginLeft: 20, marginRight: 10 }}
+                                                            >
+                                                                Títol imatge carta:
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="span"
+                                                                style={{ marginRight: 20 }}
+                                                            >
+                                                                {titolsXMLCarta[1][0].value}
+                                                            </Typography>
+                                                        </Fragment>
+                                                    } />
+                                            </Box>
+                                            <Box>
+                                                <Button color="primary" variant="contained"
+                                                    onClick={() => handleOpendialogTitols()}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    </Paper>
                                     {
                                         itemsCat2.length === 0 ? (
                                             <Typography variant="body1">No hi ha ítems.</Typography>
@@ -1286,6 +1473,39 @@ const Carta = (props) => {
                                     }
                                 </TabPanel>
                                 <TabPanel value={valueTab} index={2}>
+                                    <Paper elevation={1} className={classes.casellaTitol}>
+                                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                                <Chip
+                                                    color="secondary"
+                                                    label={
+                                                        <Fragment>
+                                                            <Typography
+                                                                variant="body2"
+                                                                component="span"
+                                                                style={{ marginLeft: 20, marginRight: 10 }}
+                                                            >
+                                                                Títol imatge carta:
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="span"
+                                                                style={{ marginRight: 20 }}
+                                                            >
+                                                                {titolsXMLCarta[2][0].value}
+                                                            </Typography>
+                                                        </Fragment>
+                                                    } />
+                                            </Box>
+                                            <Box>
+                                                <Button color="primary" variant="contained"
+                                                    onClick={() => handleOpendialogTitols()}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    </Paper>
                                     {
                                         itemsCat3.length === 0 ? (
                                             <Typography variant="body1">No hi ha ítems.</Typography>
@@ -1300,6 +1520,39 @@ const Carta = (props) => {
 
                                 </TabPanel>
                                 <TabPanel value={valueTab} index={3}>
+                                    <Paper elevation={1} className={classes.casellaTitol}>
+                                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                                <Chip
+                                                    color="secondary"
+                                                    label={
+                                                        <Fragment>
+                                                            <Typography
+                                                                variant="body2"
+                                                                component="span"
+                                                                style={{ marginLeft: 20, marginRight: 10 }}
+                                                            >
+                                                                Títol imatge carta:
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="span"
+                                                                style={{ marginRight: 20 }}
+                                                            >
+                                                                {titolsXMLCarta[3][0].value}
+                                                            </Typography>
+                                                        </Fragment>
+                                                    } />
+                                            </Box>
+                                            <Box>
+                                                <Button color="primary" variant="contained"
+                                                    onClick={() => handleOpendialogTitols()}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    </Paper>
                                     {
                                         itemsCat4.length === 0 ? (
                                             <Typography variant="body1">No hi ha ítems.</Typography>
@@ -1334,8 +1587,88 @@ const Carta = (props) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
+            {openDialogTitols ? (
+                <Box style={{ marginBottom: '20px' }}>
+                    <Dialog
+                        open={openDialogTitols}
+                        onClose={handleCloseDialogTitols}
+                        fullWidth
+                        maxWidth="sm"
+                    >
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <DialogTitle id="alert-dialog-title2">
+                                Editar títol imatge carta
+                            </DialogTitle>
+                        </Box>
+                        <DialogContent>
+                            <form onSubmit={processarDadesTitol}>
+                                <Box px={3} style={{ marginTop: 10 }}>
+                                    <FormControl
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Títol [Ca]</InputLabel>
+                                        <Input
+                                            fullWidth
+                                            className={classes.formInput}
+                                            id="form-titols_1"
+                                            defaultValue={titolsXMLCarta[valueTab][0].value}
+                                            onInput={handleChangeFormTitols('ca')}
+                                        />
+                                    </FormControl>
+                                    <FormControl
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Títol [Es]</InputLabel>
+                                        <Input
+                                            fullWidth
+                                            className={classes.formInput}
+                                            id="form-titols_2"
+                                            defaultValue={titolsXMLCarta[valueTab][1].value}
+                                            onInput={handleChangeFormTitols('es')}
+                                        />
+                                    </FormControl>
+                                    <FormControl
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Títol [En]</InputLabel>
+                                        <Input
+                                            fullWidth
+                                            className={classes.formInput}
+                                            id="form-titols_3"
+                                            defaultValue={titolsXMLCarta[valueTab][2].value}
+                                            onInput={handleChangeFormTitols('en')}
+                                        />
+                                    </FormControl>
+                                    <FormControl
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Títol [Fr]</InputLabel>
+                                        <Input
+                                            fullWidth
+                                            className={classes.formInput}
+                                            id="form-titols_4"
+                                            defaultValue={titolsXMLCarta[valueTab][3].value}
+                                            onInput={handleChangeFormTitols('fr')}
+                                        />
+                                    </FormControl>
+                                </Box>
+                                <Button
+                                    fullWidth
+                                    className={classes.formButton}
+                                    variant="contained"
+                                    color="primary"
+                                    size="large"
+                                    type="submit"
+                                    style={{ marginBottom: 15, marginTop: 15 }}
+                                >
+                                    Registrar
+                                </Button>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </Box>
+            ) : null}
             {(itemAEditar.length !== 0 || modeDialog === 'creacio') ? (
-
                 <Box style={{ marginBottom: '20px' }}>
                     <Dialog
                         open={openDialog}
@@ -1622,7 +1955,7 @@ const Carta = (props) => {
                             </form>
                         </DialogContent>
                     </Dialog>
-                </Box>                
+                </Box>
             ) : null}
         </div >
     )

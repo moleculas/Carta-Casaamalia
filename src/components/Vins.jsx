@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, Fragment } from 'react';
 import Constantes from "../constantes";
 import { makeStyles } from "@material-ui/core";
 import Box from '@material-ui/core/Box';
@@ -34,6 +34,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Item from './Item';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import Paper from '@material-ui/core/Paper';
 
 const puntuacio = Constantes.PUNTUACIO;
 const rutaApi = Constantes.RUTA_API;
@@ -119,13 +120,19 @@ const estilos = makeStyles((theme) => ({
     },
     margin: {
         marginRight: '10px',
+    },
+    //titols
+    casellaTitol: {
+        marginBottom: 30,
+        padding: 13
     }
 }));
 
 //snackbar y alert
 const Alert = (props) => {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+};
+
 //tabs
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -145,25 +152,22 @@ function TabPanel(props) {
             )}
         </div>
     );
-}
+};
 
 function a11yProps(index) {
     return {
         id: `simple-tab-${index}`,
         'aria-controls': `simple-tabpanel-${index}`,
     };
-}
+};
 
 function useForceUpdate() {
     let [value, setState] = useState(true);
     return () => setState(!value);
-}
-
+};
 
 const Vins = (props) => {
-
     let forceUpdate = useForceUpdate();
-
     const classes = estilos();
     const {
         logged,
@@ -180,6 +184,8 @@ const Vins = (props) => {
         setItemsCat8,
         laDataXMLVins,
         setLaDataXMLVins,
+        titolsXMLVins,
+        setTitolsXMLVins,
         fetCanviVins,
         setFetCanviVins
     } = useContext(CartaContext);
@@ -191,6 +197,32 @@ const Vins = (props) => {
     const [itemAEditar, setItemAEditar] = useState([]);
     const [itemDefAEditar, setItemDefAEditar] = useState([]);
     const [itemDefACrear, setItemDefACrear] = useState([]);
+    const [valuesFormTitols, setValuesFormTitols] = useState([
+        {
+            ca: '',
+            es: '',
+            en: '',
+            fr: ''
+        },
+        {
+            ca: '',
+            es: '',
+            en: '',
+            fr: ''
+        },
+        {
+            ca: '',
+            es: '',
+            en: '',
+            fr: ''
+        },
+        {
+            ca: '',
+            es: '',
+            en: '',
+            fr: ''
+        }
+    ]);
     const [keyAGestionar, setKeyAGestionar] = useState(null);
     const [modeDialog, setModeDialog] = useState(null);
     const [estemAPlats] = useState(false);
@@ -207,24 +239,28 @@ const Vins = (props) => {
         }
         setOpenSnack(false);
     };
+
     //tabs
     const [valueTab, setValueTab] = useState(0);
     const [valueTab2, setValueTab2] = useState(0);
 
     const handleChangeTab = (event, newValue) => {
         setValueTab(newValue);
-    }
+    };
+
     const handleChangeTab2 = (event, newValue) => {
         setValueTab2(newValue);
-    }
+    };
+
     const esDesktop = useMediaQuery(theme => theme.breakpoints.up('lg'));
+
     const orientacioTabs = () => {
         if (esDesktop) {
             return "horizontal";
         } else {
             return "vertical";
         }
-    }
+    };
 
     const [file, setFile] = useState(null);
     const [preFile, setPreFile] = useState(null);
@@ -233,6 +269,11 @@ const Vins = (props) => {
     const [visibilitatCarta, setVisibilitatCarta] = useState(true);
     //dialog
     const [openDialog, setOpenDialog] = useState(false);
+    const [openDialogTitols, setOpenDialogTitols] = useState(false);
+
+    const handleOpendialogTitols = () => {
+        setOpenDialogTitols(true);
+    };
 
     const handleClickOpenDialogEdicio = (elItemAEditar, laKey) => {
         setFetCanviVins(true);
@@ -258,8 +299,7 @@ const Vins = (props) => {
                 setOrdre4(laKey + 1);
                 break;
             default:
-        }
-
+        };
         let elPreFile = 'images/vins_imatges/' + elItemAEditar[6].value;
         setPreFile(elPreFile);
         if (elItemAEditar[10].value === '1') {
@@ -267,7 +307,8 @@ const Vins = (props) => {
         } else {
             setVisibilitatCarta(false)
         };
-    }
+    };
+
     const handleClickOpenDialogCreacio = () => {
         setFetCanviVins(true);
         setModeDialog('creacio');
@@ -311,8 +352,9 @@ const Vins = (props) => {
                 setKeyAGestionar(itemsCat8.length + 1);
                 break;
             default:
-        }
-    }
+        };
+    };
+
     const setRegistre = (event) => {
         let array;
         switch (event.target.id) {
@@ -395,7 +437,13 @@ const Vins = (props) => {
                 break;
             default:
         }
-    }
+    };
+
+    const handleChangeFormTitols = (prop) => (event) => {
+        let array = [...valuesFormTitols];
+        array[valueTab] = { ...valuesFormTitols[valueTab], [prop]: event.target.value }
+        setValuesFormTitols(array);
+    };
 
     const handleClickVisibilitat = () => {
         setVisibilitatCarta(!visibilitatCarta);
@@ -417,10 +465,11 @@ const Vins = (props) => {
             }
             setItemDefACrear(array);
         }
-    }
+    };
+
     const handleMouseDownVisibilitat = (event) => {
         event.preventDefault();
-    }
+    };
 
     const handleCloseDialog = () => {
         if (modeDialog === "creacio") {
@@ -457,10 +506,41 @@ const Vins = (props) => {
         setPreFile(null);
         setFile(null);
         setVisibilitatCarta(true);
-    }
+    };
+
+    const handleCloseDialogTitols = () => {
+        setOpenDialogTitols(false);
+        setValuesFormTitols([
+            {
+                ca: '',
+                es: '',
+                en: '',
+                fr: ''
+            },
+            {
+                ca: '',
+                es: '',
+                en: '',
+                fr: ''
+            },
+            {
+                ca: '',
+                es: '',
+                en: '',
+                fr: ''
+            },
+            {
+                ca: '',
+                es: '',
+                en: '',
+                fr: ''
+            }
+        ]);
+    };
 
     const [parker, setParker] = useState('');
     const [penin, setPenin] = useState('');
+
     const handleChangeSelectPr = (event) => {
         setParker(event.target.value);
         let array;
@@ -474,6 +554,7 @@ const Vins = (props) => {
             setItemDefACrear(array);
         }
     };
+
     const handleChangeSelectPe = (event) => {
         setPenin(event.target.value);
         let array;
@@ -487,10 +568,12 @@ const Vins = (props) => {
             setItemDefACrear(array);
         }
     };
+
     const [ordre1, setOrdre1] = useState('');
     const [ordre2, setOrdre2] = useState('');
     const [ordre3, setOrdre3] = useState('');
     const [ordre4, setOrdre4] = useState('');
+
     const handleChangeSelect1 = (event) => {
         switch (valueTab) {
             case 0:
@@ -508,17 +591,20 @@ const Vins = (props) => {
             default:
         }
     };
+
     const handleChangeImage = (e) => {
         setFile(e.target.files[0]);
         setPreFile(URL.createObjectURL(e.target.files[0]));
         setBotoDesactivat(false);
     };
+
     const resetImage = () => {
         setFile(null);
         setPreFile(null);
         setBotoDesactivat(true);
         document.getElementById("uploadCaptureInputFile").value = "";
-    }
+    };
+
     const handleSubmitImage = async (e) => {
         e.preventDefault();
         const ampImg = refImg.current.naturalWidth;
@@ -621,7 +707,7 @@ const Vins = (props) => {
                 break;
             default:
         }
-    }
+    };
 
     useEffect(() => {
         if (!logged) {
@@ -662,10 +748,14 @@ const Vins = (props) => {
                         let p2 = [];
                         let p3 = [];
                         let p4 = [];
+                        let titols = [];
                         var xml = new XMLParser().parseFromString(res.data);
                         let elsItems = xml.children;
                         setLaDataXMLVins(elsItems[0].value);
                         for (let i in elsItems) {
+                            if (elsItems[i].attributes.categoria === "titol") {
+                                titols.push(elsItems[i].children);
+                            };
                             if (elsItems[i].attributes.categoria === "1") {
                                 p1.push(elsItems[i].children);
                             };
@@ -677,8 +767,9 @@ const Vins = (props) => {
                             };
                             if (elsItems[i].attributes.categoria === "4") {
                                 p4.push(elsItems[i].children);
-                            }
-                        }
+                            };
+                        };
+                        setTitolsXMLVins(titols);
                         setItemsCat5(p1);
                         setItemsCat6(p2);
                         setItemsCat7(p3);
@@ -701,10 +792,10 @@ const Vins = (props) => {
 
     const laData = (elUsuari) => {
         let data = new Date().toLocaleString() + '';
-        return data + ' per '+elUsuari;
-    }
-    const reOrdenar = () => {
+        return data + ' per ' + elUsuari;
+    };
 
+    const reOrdenar = () => {
         let fromIndex;
         let element;
         let toIndex;
@@ -739,7 +830,7 @@ const Vins = (props) => {
                 break;
             default:
         }
-    }
+    };
 
     const borrarItem = (index) => {
         let fromIndex;
@@ -768,7 +859,7 @@ const Vins = (props) => {
         };
         setFetCanviVins(true);
         forceUpdate();
-    }
+    };
 
     const generarCarta = async () => {
         if (!fetCanviVins) {
@@ -787,7 +878,6 @@ const Vins = (props) => {
             setOpenSnack(true);
             return;
         };
-
         const iteracioItemsCat5 = [];
         const iteracioItemsCat6 = [];
         const iteracioItemsCat7 = [];
@@ -856,14 +946,29 @@ const Vins = (props) => {
         const stringIteracioItemsCat6 = iteracioItemsCat6.join("");
         const stringIteracioItemsCat7 = iteracioItemsCat7.join("");
         const stringIteracioItemsCat8 = iteracioItemsCat8.join("");
-        const stringIteracioTotal = stringIteracioItemsCat5 + stringIteracioItemsCat6 + stringIteracioItemsCat7 + stringIteracioItemsCat8;
-
+        const stringIteracioTitols =
+            '<item categoria="titol"><titol_ca>' + titolsXMLVins[0][0].value
+            + '</titol_ca><titol_es>' + titolsXMLVins[0][1].value
+            + '</titol_es><titol_en>' + titolsXMLVins[0][2].value
+            + '</titol_en><titol_fr>' + titolsXMLVins[0][3].value
+            + '</titol_fr></item><item categoria="titol"><titol_ca>' + titolsXMLVins[1][0].value
+            + '</titol_ca><titol_es>' + titolsXMLVins[1][1].value
+            + '</titol_es><titol_en>' + titolsXMLVins[1][2].value
+            + '</titol_en><titol_fr>' + titolsXMLVins[1][3].value
+            + '</titol_fr></item><item categoria="titol"><titol_ca>' + titolsXMLVins[2][0].value
+            + '</titol_ca><titol_es>' + titolsXMLVins[2][1].value
+            + '</titol_es><titol_en>' + titolsXMLVins[2][2].value
+            + '</titol_en><titol_fr>' + titolsXMLVins[2][3].value
+            + '</titol_fr></item><item categoria="titol"><titol_ca>' + titolsXMLVins[3][0].value
+            + '</titol_ca><titol_es>' + titolsXMLVins[3][1].value
+            + '</titol_es><titol_en>' + titolsXMLVins[3][2].value
+            + '</titol_en><titol_fr>' + titolsXMLVins[3][3].value
+            + '</titol_fr></item>';
+        const stringIteracioTotal = stringIteracioTitols + stringIteracioItemsCat5 + stringIteracioItemsCat6 + stringIteracioItemsCat7 + stringIteracioItemsCat8;
         const xmlStr = '<?xml version="1.0" encoding="UTF-8"?><doc><data>' + laData(usuari) + '</data>' + stringIteracioTotal + '</doc>';
-
         const formData = new FormData();
         formData.append("fileXML", xmlStr);
         formData.append("quina", "vins");
-
         let apiUrl = rutaApi + "saveXML.php";
         await axios.post(apiUrl, formData, {
             headers: {
@@ -887,7 +992,27 @@ const Vins = (props) => {
         });
         setFetCanviVins(false);
         setDadesCarregadesVins(false);
-    }
+    };
+
+    const processarDadesTitol = (e) => {
+        e.preventDefault();
+        let array = [...titolsXMLVins];
+        if (valuesFormTitols[valueTab].ca) {
+            array[valueTab][0].value = valuesFormTitols[valueTab].ca;
+        };
+        if (valuesFormTitols[valueTab].es) {
+            array[valueTab][1].value = valuesFormTitols[valueTab].es;
+        };
+        if (valuesFormTitols[valueTab].en) {
+            array[valueTab][2].value = valuesFormTitols[valueTab].en;
+        };
+        if (valuesFormTitols[valueTab].fr) {
+            array[valueTab][3].value = valuesFormTitols[valueTab].fr;
+        };
+        setTitolsXMLVins(array);
+        handleCloseDialogTitols();
+        setFetCanviVins(true);
+    };
 
     const processarDadesEdicio = (e) => {
         e.preventDefault();
@@ -926,8 +1051,7 @@ const Vins = (props) => {
         }
         if (!itemDefAEditar[10]) {
             array[10] = itemAEditar[10].value;
-        }
-
+        };
         switch (valueTab) {
             case 0:
                 itemsCat5[keyAGestionar][0].value = array[0];
@@ -995,7 +1119,7 @@ const Vins = (props) => {
                 break;
             default:
         }
-    }
+    };
 
     const processarDadesCreacio = (e) => {
         e.preventDefault();
@@ -1016,8 +1140,7 @@ const Vins = (props) => {
             })
             setOpenSnack(true);
             return;
-        }
-
+        };
         let elValue = [];
         elValue.push(
             {
@@ -1135,7 +1258,7 @@ const Vins = (props) => {
             default:
         }
         handleCloseDialog();
-    }
+    };
 
     const determinaOrdre = () => {
         switch (valueTab) {
@@ -1149,7 +1272,7 @@ const Vins = (props) => {
                 return ordre4;
             default:
         }
-    }
+    };
 
     return (
         <div>
@@ -1173,20 +1296,52 @@ const Vins = (props) => {
                         >
                             <Divider />
                         </Box>
-
                     </Grid>
                     <Grid item xs={12}>
                         <Box p={2}>
                             <div className={classes.root2}>
                                 <AppBar position="static">
                                     <Tabs value={valueTab} onChange={handleChangeTab} orientation={orientacioTabs()}>
-                                        <Tab label="Blancs" {...a11yProps(0)} />
-                                        <Tab label="Rosats" {...a11yProps(1)} />
-                                        <Tab label="Negres" {...a11yProps(2)} />
-                                        <Tab label="Escumosos" {...a11yProps(3)} />
+                                        <Tab label={titolsXMLVins[0][0].value} {...a11yProps(0)} />
+                                        <Tab label={titolsXMLVins[1][0].value} {...a11yProps(1)} />
+                                        <Tab label={titolsXMLVins[2][0].value} {...a11yProps(2)} />
+                                        <Tab label={titolsXMLVins[3][0].value} {...a11yProps(3)} />
                                     </Tabs>
                                 </AppBar>
                                 <TabPanel value={valueTab} index={0}>
+                                    <Paper elevation={1} className={classes.casellaTitol}>
+                                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                                <Chip
+                                                    color="secondary"
+                                                    label={
+                                                        <Fragment>
+                                                            <Typography
+                                                                variant="body2"
+                                                                component="span"
+                                                                style={{ marginLeft: 20, marginRight: 10 }}
+                                                            >
+                                                                Títol imatge vins:
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="span"
+                                                                style={{ marginRight: 20 }}
+                                                            >
+                                                                {titolsXMLVins[0][0].value}
+                                                            </Typography>
+                                                        </Fragment>
+                                                    } />
+                                            </Box>
+                                            <Box>
+                                                <Button color="primary" variant="contained"
+                                                    onClick={() => handleOpendialogTitols()}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    </Paper>
                                     {
                                         itemsCat5.length === 0 ? (
                                             <Typography variant="body1">No hi ha ítems.</Typography>
@@ -1200,6 +1355,39 @@ const Vins = (props) => {
                                     }
                                 </TabPanel>
                                 <TabPanel value={valueTab} index={1}>
+                                    <Paper elevation={1} className={classes.casellaTitol}>
+                                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                                <Chip
+                                                    color="secondary"
+                                                    label={
+                                                        <Fragment>
+                                                            <Typography
+                                                                variant="body2"
+                                                                component="span"
+                                                                style={{ marginLeft: 20, marginRight: 10 }}
+                                                            >
+                                                                Títol imatge vins:
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="span"
+                                                                style={{ marginRight: 20 }}
+                                                            >
+                                                                {titolsXMLVins[1][0].value}
+                                                            </Typography>
+                                                        </Fragment>
+                                                    } />
+                                            </Box>
+                                            <Box>
+                                                <Button color="primary" variant="contained"
+                                                    onClick={() => handleOpendialogTitols()}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    </Paper>
                                     {
                                         itemsCat6.length === 0 ? (
                                             <Typography variant="body1">No hi ha ítems.</Typography>
@@ -1213,6 +1401,39 @@ const Vins = (props) => {
                                     }
                                 </TabPanel>
                                 <TabPanel value={valueTab} index={2}>
+                                    <Paper elevation={1} className={classes.casellaTitol}>
+                                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                                <Chip
+                                                    color="secondary"
+                                                    label={
+                                                        <Fragment>
+                                                            <Typography
+                                                                variant="body2"
+                                                                component="span"
+                                                                style={{ marginLeft: 20, marginRight: 10 }}
+                                                            >
+                                                                Títol imatge vins:
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="span"
+                                                                style={{ marginRight: 20 }}
+                                                            >
+                                                                {titolsXMLVins[2][0].value}
+                                                            </Typography>
+                                                        </Fragment>
+                                                    } />
+                                            </Box>
+                                            <Box>
+                                                <Button color="primary" variant="contained"
+                                                    onClick={() => handleOpendialogTitols()}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    </Paper>
                                     {
                                         itemsCat7.length === 0 ? (
                                             <Typography variant="body1">No hi ha ítems.</Typography>
@@ -1227,6 +1448,39 @@ const Vins = (props) => {
 
                                 </TabPanel>
                                 <TabPanel value={valueTab} index={3}>
+                                    <Paper elevation={1} className={classes.casellaTitol}>
+                                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                                <Chip
+                                                    color="secondary"
+                                                    label={
+                                                        <Fragment>
+                                                            <Typography
+                                                                variant="body2"
+                                                                component="span"
+                                                                style={{ marginLeft: 20, marginRight: 10 }}
+                                                            >
+                                                                Títol imatge vins:
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                component="span"
+                                                                style={{ marginRight: 20 }}
+                                                            >
+                                                                {titolsXMLVins[3][0].value}
+                                                            </Typography>
+                                                        </Fragment>
+                                                    } />
+                                            </Box>
+                                            <Box>
+                                                <Button color="primary" variant="contained"
+                                                    onClick={() => handleOpendialogTitols()}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    </Paper>
                                     {
                                         itemsCat8.length === 0 ? (
                                             <Typography variant="body1">No hi ha ítems.</Typography>
@@ -1261,8 +1515,88 @@ const Vins = (props) => {
                     {alert.mensaje}
                 </Alert>
             </Snackbar>
+            {openDialogTitols ? (
+                <Box style={{ marginBottom: '20px' }}>
+                    <Dialog
+                        open={openDialogTitols}
+                        onClose={handleCloseDialogTitols}
+                        fullWidth
+                        maxWidth="sm"
+                    >
+                        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <DialogTitle id="alert-dialog-title2">
+                                Editar títol imatge vins
+                            </DialogTitle>
+                        </Box>
+                        <DialogContent>
+                            <form onSubmit={processarDadesTitol}>
+                                <Box px={3} style={{ marginTop: 10 }}>
+                                    <FormControl
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Títol [Ca]</InputLabel>
+                                        <Input
+                                            fullWidth
+                                            className={classes.formInput}
+                                            id="form-titols_1"
+                                            defaultValue={titolsXMLVins[valueTab][0].value}
+                                            onInput={handleChangeFormTitols('ca')}
+                                        />
+                                    </FormControl>
+                                    <FormControl
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Títol [Es]</InputLabel>
+                                        <Input
+                                            fullWidth
+                                            className={classes.formInput}
+                                            id="form-titols_2"
+                                            defaultValue={titolsXMLVins[valueTab][1].value}
+                                            onInput={handleChangeFormTitols('es')}
+                                        />
+                                    </FormControl>
+                                    <FormControl
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Títol [En]</InputLabel>
+                                        <Input
+                                            fullWidth
+                                            className={classes.formInput}
+                                            id="form-titols_3"
+                                            defaultValue={titolsXMLVins[valueTab][2].value}
+                                            onInput={handleChangeFormTitols('en')}
+                                        />
+                                    </FormControl>
+                                    <FormControl
+                                        className={classes.form}
+                                    >
+                                        <InputLabel>Títol [Fr]</InputLabel>
+                                        <Input
+                                            fullWidth
+                                            className={classes.formInput}
+                                            id="form-titols_4"
+                                            defaultValue={titolsXMLVins[valueTab][3].value}
+                                            onInput={handleChangeFormTitols('fr')}
+                                        />
+                                    </FormControl>
+                                </Box>
+                                <Button
+                                    fullWidth
+                                    className={classes.formButton}
+                                    variant="contained"
+                                    color="primary"
+                                    size="large"
+                                    type="submit"
+                                    style={{ marginBottom: 15, marginTop: 15 }}
+                                >
+                                    Registrar
+                                </Button>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </Box>
+            ) : null}
             {(itemAEditar.length !== 0 || modeDialog === 'creacio') ? (
-
                 <Box style={{ marginBottom: '20px' }}>
                     <Dialog
                         open={openDialog}
