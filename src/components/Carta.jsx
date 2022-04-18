@@ -620,6 +620,7 @@ const Carta = (props) => {
         elStringParada = elStringParada.replace('(8-11) Carnisseria Figueras', '32');
         elStringParada = elStringParada.replace('(12-13) Xarcuteria Teruel', '33');
         elStringParada = elStringParada.replace('(179-182) Llegums cuits, menjars preparats i fruits secs F. Lorente', '34');
+        elStringParada = elStringParada.replace('(47-48-49) Especialitats Marta', '35');
         return elStringParada;
     };
 
