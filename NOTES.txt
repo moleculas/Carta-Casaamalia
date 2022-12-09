@@ -1,0 +1,1 @@
+-Recordar canviar package.json segons DEV o PROD si no, donarà error MAX REDIRECT

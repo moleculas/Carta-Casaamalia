@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import {
     List,
     ListItem,
@@ -14,16 +14,21 @@ import SubdirectoryArrowRightIcon from '@material-ui/icons/SubdirectoryArrowRigh
 import { Link } from "react-router-dom";
 import { CartaContext } from '../context/CartaProvider';
 import { withRouter } from "react-router-dom";
+import Typography from '@material-ui/core/Typography';
+import clsx from 'clsx';
+import RotateLeftIcon from '@material-ui/icons/RotateLeft';
 
 const estilos = makeStyles(theme => ({
     link: {
         textDecoration: 'none',
         color: 'inherit'
+    },
+    alarma: {
+        color: 'red'
     }
 }))
 
 const Menu = (props) => {
-
     const classes = estilos();
     const {
         logged,
@@ -56,8 +61,64 @@ const Menu = (props) => {
         setLaDataXMLCarta('');
         setLaDataXMLVins('');
         props.history.push('/login');
-    }
-    
+    };
+    const Ref = useRef(null);
+    const [timer, setTimer] = useState(null);
+    const [tiempoAlarma, setTiempoAlarma] = useState(false);
+
+    //useEffect
+
+    const getTimeRemaining = (e) => {
+        const total = Date.parse(e) - Date.parse(new Date());
+        const seconds = Math.floor((total / 1000) % 60);
+        const minutes = Math.floor((total / 1000 / 60) % 60);
+        return {
+            total, minutes, seconds
+        };
+    };
+
+    const startTimer = (e) => {
+        let { total, minutes, seconds }
+            = getTimeRemaining(e);
+        if (total >= 0) {
+            setTimer(
+                (minutes > 9 ? minutes : '0' + minutes) + ':'
+                + (seconds > 9 ? seconds : '0' + seconds)
+            );
+            if ((total / 1000) === 15) {
+                setTiempoAlarma(true);
+            };
+        };
+    };
+
+    const clearTimer = (e) => {
+        setTimer('03:00');
+        if (Ref.current) clearInterval(Ref.current);
+        const id = setInterval(() => {
+            startTimer(e);
+        }, 1000);
+        Ref.current = id;
+    };
+
+    const getDeadTime = () => {
+        let deadline = new Date();
+        deadline.setSeconds(deadline.getSeconds() + 180);
+        return deadline;
+    };
+
+    useEffect(() => {
+        if (logged) {
+            setTiempoAlarma(false);
+            clearTimer(getDeadTime());
+        };
+    }, [logged]);
+
+    useEffect(() => {
+        if (timer) {
+            timer === '00:00' && (tancarSessio());
+        };
+    }, [timer]);
+
     return (
         <div>
             <List component='nav'>
@@ -97,9 +158,24 @@ const Menu = (props) => {
                     <ListItemIcon>
                         <LockOpenIcon />
                     </ListItemIcon>
-                    <ListItemText primary={logged ? ('Logout') : ('Login')} />
+                    <ListItemText primary={logged ? (
+                        <>
+                            <Typography component={'span'}>{`Logout `}</Typography>
+                            <Typography className={clsx(tiempoAlarma && (classes.alarma))} component={'span'}>{`(${timer})`}</Typography>
+                        </>
+                    ) : ('Login')} />
                 </ListItem>
-
+                {logged && (
+                    <ListItem
+                        button
+                        onClick={() => { setTiempoAlarma(false); clearTimer(getDeadTime()) }}
+                    >
+                        <ListItemIcon>
+                            <RotateLeftIcon />
+                        </ListItemIcon>
+                        <ListItemText primary='Reset contador' />
+                    </ListItem>
+                )}
                 <Divider />
             </List>
         </div>

@@ -797,7 +797,7 @@ const Carta = (props) => {
                 (async () => {
                     axios.get(prePath + 'xml/menu.xml', {
                         "Content-Type": "application/xml; charset=utf-8"
-                    }).then(res => {
+                    }).then(res => {                        
                         let p1 = [];
                         let p2 = [];
                         let p3 = [];
@@ -1957,7 +1957,7 @@ const Carta = (props) => {
                         </DialogContent>
                     </Dialog>
                 </Box>
-            ) : null}
+            ) : null}           
         </div >
     )
 }
