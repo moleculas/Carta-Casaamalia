@@ -16,7 +16,6 @@ import { CartaContext } from '../context/CartaProvider';
 import { withRouter } from "react-router-dom";
 import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
-import RotateLeftIcon from '@material-ui/icons/RotateLeft';
 
 const estilos = makeStyles(theme => ({
     link: {
@@ -63,7 +62,7 @@ const Menu = (props) => {
         props.history.push('/login');
     };
     const Ref = useRef(null);
-    const [timer, setTimer] = useState(null);
+    const [timer, setTimer] = useState('01:00');
     const [tiempoAlarma, setTiempoAlarma] = useState(false);
 
     //useEffect
@@ -92,32 +91,75 @@ const Menu = (props) => {
     };
 
     const clearTimer = (e) => {
-        setTimer('03:00');
+        setTimer('01:00');
         if (Ref.current) clearInterval(Ref.current);
-        const id = setInterval(() => {
-            startTimer(e);
-        }, 1000);
-        Ref.current = id;
+        if (e) {
+            const id = setInterval(() => {
+                startTimer(e);
+            }, 1000);
+            Ref.current = id;
+        };
     };
 
     const getDeadTime = () => {
         let deadline = new Date();
-        deadline.setSeconds(deadline.getSeconds() + 180);
+        deadline.setSeconds(deadline.getSeconds() + 60);
         return deadline;
-    };
-
-    useEffect(() => {
-        if (logged) {
-            setTiempoAlarma(false);
-            clearTimer(getDeadTime());
-        };
-    }, [logged]);
+    };  
 
     useEffect(() => {
         if (timer) {
             timer === '00:00' && (tancarSessio());
         };
     }, [timer]);
+
+    useEffect(() => {
+        if (logged) {
+            const interval = setInterval(() => {
+                checkForInactivity();
+            }, 5000);
+            return () => clearInterval(interval);
+        };
+    }, [logged]);
+
+    useEffect(() => {
+        if (logged) {
+            updateExpireTime();
+            window.addEventListener("click", updateExpireTime);
+            window.addEventListener("keypress", updateExpireTime);
+            window.addEventListener("scroll", updateExpireTime);
+            window.addEventListener("mousemove", updateExpireTime);
+            return () => {
+                window.removeEventListener("click", updateExpireTime);
+                window.removeEventListener("keypress", updateExpireTime);
+                window.removeEventListener("scroll", updateExpireTime);
+                window.removeEventListener("mousemove", updateExpireTime);
+            };
+        };
+    }, [logged]);
+
+    //funciones
+
+    const checkForInactivity = () => {
+        const expireTime = localStorage.getItem("expireTime");
+        if (expireTime < Date.now()) {
+            const expireTime = null;
+            localStorage.setItem("expireTime", expireTime);
+            comencaCompteEnrere();
+        };
+    };
+
+    const comencaCompteEnrere = () => {
+        setTiempoAlarma(false);
+        clearTimer(getDeadTime());
+    };
+
+    const updateExpireTime = () => {
+        const expireTime = Date.now() + 120000;
+        localStorage.setItem("expireTime", expireTime);
+        setTiempoAlarma(false);
+        clearTimer(null);
+    };
 
     return (
         <div>
@@ -141,6 +183,7 @@ const Menu = (props) => {
                             </ListItem>
                         </Link>
                         <a rel="noopener noreferrer" href="https://carta.casaamalia.com" target="_blank" className={classes.link}>
+                        {/* <a rel="noopener noreferrer" href="https://carta.casaamalia.cat" target="_blank" className={classes.link}> */}
                             <ListItem button>
                                 <ListItemIcon>
                                     <SubdirectoryArrowRightIcon />
@@ -164,18 +207,7 @@ const Menu = (props) => {
                             <Typography className={clsx(tiempoAlarma && (classes.alarma))} component={'span'}>{`(${timer})`}</Typography>
                         </>
                     ) : ('Login')} />
-                </ListItem>
-                {logged && (
-                    <ListItem
-                        button
-                        onClick={() => { setTiempoAlarma(false); clearTimer(getDeadTime()) }}
-                    >
-                        <ListItemIcon>
-                            <RotateLeftIcon />
-                        </ListItemIcon>
-                        <ListItemText primary='Reset contador' />
-                    </ListItem>
-                )}
+                </ListItem>               
                 <Divider />
             </List>
         </div>
